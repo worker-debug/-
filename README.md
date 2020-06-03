@@ -7,7 +7,7 @@
 ``` bash
 # install dependencies
 npm install
-
+# 运行项目之前，打开网易云接口api文件夹运行node ./app.js文件
 # serve with hot reload at localhost:8080
 npm run dev
 
