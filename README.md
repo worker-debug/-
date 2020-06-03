@@ -1,5 +1,7 @@
 # wyy
 
+# 在运行项目之前，必须先将网易云接口api文件夹里面的app.js运行
+
 > A Vue.js project
 
 ## Build Setup
