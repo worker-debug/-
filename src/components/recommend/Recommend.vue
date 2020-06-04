@@ -45,6 +45,7 @@
 </template>
 
 <script>
+import { mapState, mapMutations } from 'vuex'
 export default {
   props: {
     recoverAudio: {
@@ -58,7 +59,6 @@ export default {
       bannerUrl: '',
       recommendMusicList: [],
       recommendMvList: []
-
     }
   },
   created () {
@@ -69,7 +69,11 @@ export default {
   mounted () {
     this.recoverAudio(true)
   },
+  computed: {
+    ...mapState(['Mid'])
+  },
   methods: {
+    ...mapMutations(['save', 'save1']),
     // 获取轮播图信息
     async getBanner () {
       let res = await this.$axios.get('http://localhost:3000/banner?type=2')
@@ -82,13 +86,15 @@ export default {
       let res = await this.$axios.get('http://localhost:3000/personalized/newsong')
       // console.log(res)
       this.recommendMusicList = res.data.result
+      this.save1(res.data.result)
     },
     step (i) {
       return i++
     },
     // 播放推荐歌曲
     playRecommendMusic (id) {
-      // console.log(id)
+      // this.save(id)
+      // console.log(this.$store.state.Mid)
       let singer = this.recommendMusicList[id].song.artists[0].name
       let songName = this.recommendMusicList[id].name
       let recommendMusicId = this.recommendMusicList[id].id
