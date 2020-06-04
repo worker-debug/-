@@ -44,7 +44,15 @@
         </el-main>
         <!-- 底部区域 -->
         <el-footer>
-          <audio :src="musicUrl" controls loop><span class="audioLyric">歌词</span></audio>
+          <div class="div-audio">
+          <audio :src="musicUrl" controls loop autoplay></audio>
+          <button>
+          <i class="el-icon-caret-left" @click="upsongs"></i>
+          </button>
+          <button>
+          <i class="el-icon-caret-right" @click="downsongs"></i>
+          </button>
+          </div>
         </el-footer>
       </el-container>
     </el-container>
@@ -54,6 +62,7 @@
 // eslint-disable-next-line no-unused-vars
 // import lyric from '../lyric/Lyric'
 // import lyrics from '../../js/lyrics'
+import { mapMutations, mapState } from 'vuex'
 export default {
   data () {
     return {
@@ -72,10 +81,11 @@ export default {
     this.recoverAudio(true)
     // console.log(this.$route.path)
   },
-  watch: {
-
+  computed: {
+    ...mapState(['Mid'])
   },
   methods: {
+    ...mapMutations(['upsong', 'downsong', 'ret', 'next']),
     // 跳转查询歌曲列表页
     search () {
       if (this.searchData === '') {
@@ -108,10 +118,10 @@ export default {
       // 隐藏播放按钮audio
       myaudio.volume = 0.5
       if (this.$route.path === '/lyric') {
-        myaudio.setAttribute('hidden', true)
+        myaudio.parentNode.className = 'div-audio hidd'
         // myaudio.hidden = 'hidden'
       } else {
-        myaudio.removeAttribute('hidden')
+        myaudio.parentNode.className = 'div-audio'
       }
       // myaudio.play()
       // let onOff = true
@@ -146,7 +156,7 @@ export default {
       // console.log('audio')
     },
     // 点击歌词跳转歌词页面
-    returnLyric () {
+    lyrPage () {
       this.$router.push('/lyric')
     },
     // 跳转歌单页面
@@ -156,6 +166,33 @@ export default {
     // 跳转歌手页面
     singer () {
       this.$router.push('/singer')
+    },
+    // 播放上一首歌
+    upsongs () {
+      if (this.$store.state.Mid > 0) {
+        this.upsong()
+        let id = this.$store.state.Mid
+        // console.log(id)
+        let recommendMusicList = this.$store.state.recommendMusicList
+        // let singer = recommendMusicList[id].song.artists[0].name
+        // let songName = recommendMusicList[id].name
+        let recommendMusicId = recommendMusicList[id].id
+        this.musicUrl = 'https://music.163.com/song/media/outer/url?id=' + recommendMusicId + '.mp3'
+      } else {
+        this.ret()
+      }
+    },
+    // 播放下一首
+    downsongs () {
+      if (this.$store.state.Mid < this.$store.state.recommendMusicList.length - 1) {
+        this.downsong()
+        let id = this.$store.state.Mid
+        let recommendMusicList = this.$store.state.recommendMusicList
+        let recommendMusicId = recommendMusicList[id].id
+        this.musicUrl = 'https://music.163.com/song/media/outer/url?id=' + recommendMusicId + '.mp3'
+      } else {
+        this.next()
+      }
     }
 
   }
@@ -221,17 +258,35 @@ export default {
   display: flex;
 }
 .el-footer audio {
-  width: 500px;
+  width: 950px;
   height: 40px;
-  border-style: groove;
+  /* border-style: groove; */
   margin: 10px 0;
-  flex: 1;
-}
-.audioLyric {
-  /* background-color: red; */
-  text-align: center;
-  line-height: 60px;
-  border: 2px solid black;
+  /* flex: 1; */
 }
 
+.div-audio {
+  width: 100%;
+  height: 60px;
+  /* background-color: red; */
+  position: relative;
+  /* display: none; */
+}
+.hidd {
+  display: none;
+}
+.div-audio i {
+  position: absolute;
+  font-size: 40px;
+  top: 10px;
+}
+.div-audio i:hover {
+  cursor: pointer;
+}
+.el-icon-caret-right {
+  margin-left: 60px;
+}
+.el-icon-caret-left {
+  margin-left: 10px;
+}
 </style>
